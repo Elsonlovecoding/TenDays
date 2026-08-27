@@ -3,6 +3,7 @@ import { SceneManager } from './core/SceneManager.js';
 import { createPlaceholderScene } from './scenes/placeholder.js';
 import { createDummyA } from './scenes/dummyA.js';
 import { createDummyB } from './scenes/dummyB.js';
+import { createTestRoom } from './scenes/testRoom.js';
 
 // Core loop only — no scene logic lives here. Scenes are modules in
 // src/scenes managed by SceneManager.
@@ -16,12 +17,13 @@ const scenes = new SceneManager(renderer);
 scenes.register('placeholder', createPlaceholderScene);
 scenes.register('dummy-a', createDummyA);
 scenes.register('dummy-b', createDummyB);
+scenes.register('test-room', createTestRoom);
 scenes.switchTo('placeholder');
 
 // Debug switching (P1.2): keys 1/2/3. The logged renderer.info.memory counts
 // must come back to the same values each time a scene is revisited — if they
 // only ever grow, some scene's dispose() is leaking.
-const KEY_TO_SCENE = { 1: 'placeholder', 2: 'dummy-a', 3: 'dummy-b' };
+const KEY_TO_SCENE = { 1: 'placeholder', 2: 'dummy-a', 3: 'dummy-b', 4: 'test-room' };
 window.addEventListener('keydown', (event) => {
   const name = KEY_TO_SCENE[event.key];
   if (!name) return;

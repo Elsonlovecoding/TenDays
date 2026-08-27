@@ -6,7 +6,8 @@ import * as THREE from 'three';
 // values every time a scene is revisited).
 //
 // Scene contract (every module in src/scenes returns this shape):
-//   factory() -> { scene, camera, init(), update(dt), dispose() }
+//   factory() -> { scene, camera, init(ctx), update(dt), dispose() }
+// where ctx = { renderer } — scenes that don't need it just ignore it.
 export class SceneManager {
   constructor(renderer) {
     this.renderer = renderer;
@@ -28,7 +29,7 @@ export class SceneManager {
       this.active = null;
     }
     const next = factory();
-    next.init();
+    next.init({ renderer: this.renderer });
     this.active = next;
     this.activeName = name;
   }
