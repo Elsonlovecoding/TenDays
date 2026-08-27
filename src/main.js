@@ -15,6 +15,9 @@ const active = createPlaceholderScene();
 window.addEventListener('resize', () => {
   active.camera.aspect = window.innerWidth / window.innerHeight;
   active.camera.updateProjectionMatrix();
+  // Re-read the pixel ratio too: it changes when the window moves to a
+  // monitor with different DPI (which also fires a resize event).
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 

@@ -18,8 +18,12 @@ Phase map and prompt playbook: docs/ROADMAP.md.
 ## Decisions
 - Vite `base` is `/TenDays/` to match the GitHub Pages project path.
 - Deploy workflow triggers on pushes to `main` AND `claude/**` (session branches),
-  so each session's push is immediately checkable at the public URL. Latest push
-  wins; tighten to `main`-only if that ever becomes a problem.
+  so each session's push is checkable at the public URL once its Actions run
+  finishes. Latest push wins; tighten to `main`-only if that ever becomes a problem.
+- Deploy publishes `dist/` to the `gh-pages` branch (peaceiris/actions-gh-pages)
+  instead of the actions/deploy-pages route: the workflow token wasn't allowed to
+  create the Pages site via API, while creating a `gh-pages` branch enables Pages
+  automatically. `gh-pages` is build output only — never edit it by hand.
 - Placeholder camera already uses FOV 75 and eye height 1.7m — the P1.3
   PlayerController spec — so these numbers never change later.
 
