@@ -12,8 +12,12 @@ Phase map and prompt playbook: docs/ROADMAP.md.
 - Core loop in `src/main.js`: renderer + resize + animation loop only, no scene
   logic. Placeholder scene (gray floor + plain sky) in `src/scenes/placeholder.js`,
   returning `{ scene, camera, update }` — the shape SceneManager will manage from P1.2.
-- GitHub Pages auto-deploy: `.github/workflows/deploy.yml` (build → deploy on push).
-- Public URL: https://elsonlovecoding.github.io/TenDays/
+- GitHub Pages auto-deploy: `.github/workflows/deploy.yml` builds and publishes
+  `dist/` to the `gh-pages` branch on every push (verified green in Actions).
+- Public URL: https://elsonlovecoding.github.io/TenDays/ — PENDING one one-time
+  manual step (needs repo-admin rights no automation token has): repo Settings →
+  Pages → Source "Deploy from a branch" → Branch `gh-pages` / `/ (root)` → Save.
+  After that, every push deploys automatically with no further clicks.
 
 ## Decisions
 - Vite `base` is `/TenDays/` to match the GitHub Pages project path.
