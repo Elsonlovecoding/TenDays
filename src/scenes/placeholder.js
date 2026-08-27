@@ -1,38 +1,48 @@
 import * as THREE from 'three';
+import { disposeScene } from '../core/SceneManager.js';
 
-// Placeholder scene: gray floor + plain sky. Proves the scaffold and the core
-// loop work end to end; replaced by real dimensions from P1.4 on.
+// Placeholder scene: gray floor + plain sky. Replaced by real dimensions
+// from P1.4 on.
 export function createPlaceholderScene() {
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xbfd1e5);
+  return {
+    scene: null,
+    camera: null,
 
-  // Eye height 1.7m and FOV 75 — the standard the PlayerController (P1.3) will use.
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    200
-  );
-  camera.position.set(0, 1.7, 5);
-  camera.lookAt(0, 1.7, 0);
+    init() {
+      this.scene = new THREE.Scene();
+      this.scene.background = new THREE.Color(0xbfd1e5);
 
-  const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(100, 100),
-    new THREE.MeshStandardMaterial({ color: 0x808080 })
-  );
-  floor.rotation.x = -Math.PI / 2;
-  scene.add(floor);
+      // Eye height 1.7m and FOV 75 — the standard the PlayerController (P1.3) will use.
+      this.camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        200
+      );
+      this.camera.position.set(0, 1.7, 5);
+      this.camera.lookAt(0, 1.7, 0);
 
-  const hemi = new THREE.HemisphereLight(0xbfd1e5, 0x404040, 1.2);
-  scene.add(hemi);
+      const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(100, 100),
+        new THREE.MeshStandardMaterial({ color: 0x808080 })
+      );
+      floor.rotation.x = -Math.PI / 2;
+      this.scene.add(floor);
 
-  const sun = new THREE.DirectionalLight(0xffffff, 1.5);
-  sun.position.set(5, 10, 2);
-  scene.add(sun);
+      const hemi = new THREE.HemisphereLight(0xbfd1e5, 0x404040, 1.2);
+      this.scene.add(hemi);
 
-  function update(dt) {
-    // Nothing animates yet; the loop calls this every frame.
-  }
+      const sun = new THREE.DirectionalLight(0xffffff, 1.5);
+      sun.position.set(5, 10, 2);
+      this.scene.add(sun);
+    },
 
-  return { scene, camera, update };
+    update(dt) {
+      // Nothing animates yet.
+    },
+
+    dispose() {
+      disposeScene(this.scene);
+    },
+  };
 }

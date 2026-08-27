@@ -19,6 +19,19 @@ Phase map and prompt playbook: docs/ROADMAP.md.
   Pages → Source "Deploy from a branch" → Branch `gh-pages` / `/ (root)` → Save.
   After that, every push deploys automatically with no further clicks.
 
+### P1.2 — scene manager (2026-08-27)
+- `src/core/SceneManager`: register named scene factories, `switchTo(name)`
+  disposes the outgoing scene and builds the incoming one fresh; update/render/
+  resize all route through it — `main.js` is loop-only again.
+- Scene contract: `factory() -> { scene, camera, init(), update(dt), dispose() }`;
+  shared `disposeScene()` helper frees geometries/materials/textures.
+- Two debug scenes (`dummyA` cube ring, `dummyB` bobbing spheres) + number-key
+  switching (1/2/3), each switch logs `renderer.info.memory`.
+- Verified headless: 10 full switch cycles (30 switches) — geometries/textures
+  return to identical counts on every revisit; no growth, no console errors.
+- Console handle `window.__tendays = { renderer, scenes }` for manual
+  `renderer.info` checks.
+
 ## Decisions
 - Vite `base` is `/TenDays/` to match the GitHub Pages project path.
 - Deploy workflow triggers on pushes to `main` AND `claude/**` (session branches),
@@ -32,6 +45,6 @@ Phase map and prompt playbook: docs/ROADMAP.md.
   PlayerController spec — so these numbers never change later.
 
 ## Next up
-- **P1.2 scene manager**: build `src/core/SceneManager` — register named scenes,
-  switch between them, each scene owns init/update/dispose; two dummy scenes +
-  debug number-key switching; verify dispose via `renderer.info` (no memory growth).
+- **P1.3 player controller**: build `src/systems/PlayerController` — pointer lock
+  + mouse look, WASD, eye height 1.7m, ~2 m/s walk with short accel/decel, FOV 75,
+  AABB collision against registered colliders; no jumping, no head bob.
