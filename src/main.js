@@ -1,20 +1,39 @@
 import * as THREE from 'three';
+import { SceneManager } from './core/SceneManager.js';
 import { createPlaceholderScene } from './scenes/placeholder.js';
+import { createDummyA } from './scenes/dummyA.js';
+import { createDummyB } from './scenes/dummyB.js';
 
-// Core loop only — no scene logic lives here. Scenes are built in src/scenes/
-// and will be managed by src/core/SceneManager from P1.2 on.
+// Core loop only — no scene logic lives here. Scenes are modules in
+// src/scenes managed by SceneManager.
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Every scene module returns the same shape: { scene, camera, update(dt) }.
-const active = createPlaceholderScene();
+const scenes = new SceneManager(renderer);
+scenes.register('placeholder', createPlaceholderScene);
+scenes.register('dummy-a', createDummyA);
+scenes.register('dummy-b', createDummyB);
+scenes.switchTo('placeholder');
+
+// Debug switching (P1.2): keys 1/2/3. The logged renderer.info.memory counts
+// must come back to the same values each time a scene is revisited — if they
+// only ever grow, some scene's dispose() is leaking.
+const KEY_TO_SCENE = { 1: 'placeholder', 2: 'dummy-a', 3: 'dummy-b' };
+window.addEventListener('keydown', (event) => {
+  const name = KEY_TO_SCENE[event.key];
+  if (!name) return;
+  scenes.switchTo(name);
+  console.log(`[scene] ${name}`, JSON.stringify(renderer.info.memory));
+});
+
+// Console access for debugging, e.g. __tendays.renderer.info.memory
+window.__tendays = { renderer, scenes };
 
 window.addEventListener('resize', () => {
-  active.camera.aspect = window.innerWidth / window.innerHeight;
-  active.camera.updateProjectionMatrix();
+  scenes.resize(window.innerWidth, window.innerHeight);
   // Re-read the pixel ratio too: it changes when the window moves to a
   // monitor with different DPI (which also fires a resize event).
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -24,6 +43,6 @@ window.addEventListener('resize', () => {
 const clock = new THREE.Clock();
 renderer.setAnimationLoop(() => {
   const dt = clock.getDelta();
-  active.update(dt);
-  renderer.render(active.scene, active.camera);
+  scenes.update(dt);
+  scenes.render();
 });
