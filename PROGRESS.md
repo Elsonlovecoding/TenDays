@@ -1,9 +1,37 @@
 # PROGRESS
 
-Current phase: **P1 — 面试房间 graybox** (Part I · The Arrival), Session A.
+Current phase: **P1 — 面试房间 graybox** (Part I · The Arrival), Session B.
 Phase map and prompt playbook: docs/ROADMAP.md.
 
 ## Done
+
+### P1.4 — config-driven room shell (2026-08-28)
+- `src/config/room.js`: the 面试房间 as ONE config object, every dimension in
+  meters — inner size 6×8×3, wall thickness 0.2, door (wall/offset/size),
+  spawn point, furniture boxes (desk + two chairs, placeholder sizes until
+  P1.5), and the graybox gray values. All numbers TODO(canon) placeholders
+  until the P2 pass over docs/对照表-面试房间.md.
+- `src/scenes/InterviewRoom.js` (key 4): builds floor, ceiling, four walls,
+  door slab and furniture purely from that config — construction logic only,
+  zero layout numbers in the scene (P3 instances this template thousands of
+  times). The door wall splits into two side segments + a header over the
+  opening; a slab closes the opening (Interactable in P1.8). Every wall
+  segment, the door and all furniture register as colliders. The config is
+  validated first thing in init() — a bad door wall name or a door that
+  doesn't fit inside its wall's inner span throws one clear error before any
+  listeners or GPU resources exist, instead of building broken geometry.
+- `createInterviewRoom(cfg = ROOM)` takes an optional per-instance config, so
+  P3 can register seed-varied rooms (`() => createInterviewRoom(varied)`)
+  without touching the shared export. Verified: a varied copy builds a 10m
+  room with moved door/desk while the default room stays 6m.
+- `src/scenes/testRoom.js` deleted — its debug job (walking the controller in
+  a box) is done by the real room now, as its own comment planned.
+- Verified headless (Playwright + pixel/geometry assertions): changing
+  inner size, door offset/size, or a furniture position in room.js changes
+  both the scene graph AND the rendered pixels (e.g. moving the door redraws
+  47% of the frame); restoring the config restores the exact baseline image;
+  no geometry/texture leak after leave-and-revisit (dummy-a counts identical
+  before/after).
 
 ### P1.1 — scaffold + deploy (2026-08-27)
 - Vite 8 + Three.js 0.185 scaffold: plain JavaScript, ES modules, no framework.
@@ -47,6 +75,12 @@ Phase map and prompt playbook: docs/ROADMAP.md.
   pointer-lock exit; dispose removes all listeners.
 
 ## Decisions
+- The graybox palette lives in room.js, not the scene: P1.5 wants per-object
+  gray values and P3 instances may vary them per door seed, so color is
+  template data like every other number.
+- The room's coordinate convention (documented in room.js): origin at floor
+  center, +x east / +z south, door on the north wall, player spawns just
+  inside it facing the desk.
 - Vite `base` is `/TenDays/` to match the GitHub Pages project path.
 - Deploy workflow triggers on pushes to `main` AND `claude/**` (session branches),
   so each session's push is checkable at the public URL once its Actions run
@@ -59,6 +93,7 @@ Phase map and prompt playbook: docs/ROADMAP.md.
   PlayerController spec — so these numbers never change later.
 
 ## Next up
-- **P1.4 config-driven room shell**: `src/config/room.js` — every dimension of
-  the 面试房间 in meters in one config object; `src/scenes/InterviewRoom` reads
-  ONLY from that config (template for thousands of instances in P3). Gray only.
+- **P1.5 furniture placeholders**: extend room.js + InterviewRoom with
+  furniture at real human proportions (desk 1.4×0.7×0.75m, chairs seat 0.45m
+  facing each other, door 2.1×0.9m recessed 0.1m). Slightly different grays
+  per object so silhouettes separate.
