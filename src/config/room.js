@@ -11,7 +11,7 @@
 // arrive in the P2 canon pass from docs/对照表-面试房间.md, each citing its 引用.
 export const ROOM = {
   // Inner (walkable) size of the room; walls sit outside these bounds.
-  inner: { width: 6, depth: 8, height: 3 },
+  inner: { width: 6, depth: 10, height: 3 },
 
   wallThickness: 0.2,
 
