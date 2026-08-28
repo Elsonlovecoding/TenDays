@@ -34,6 +34,16 @@ window.addEventListener('keydown', (event) => {
 // Console access for debugging, e.g. __tendays.renderer.info.memory
 window.__tendays = { renderer, scenes };
 
+// Debug key legend until the real UI layer arrives (P1.6) — without it the
+// deployed site gives no clue these keys exist.
+const legend = document.createElement('div');
+legend.textContent = '按 1-4 切换场景 · 4 = 测试房间（点击进入 · WASD 行走 · Esc 退出）';
+legend.style.cssText =
+  'position:fixed;top:1rem;left:50%;transform:translateX(-50%);' +
+  'color:#ddd;font:13px sans-serif;background:rgba(0,0,0,.45);' +
+  'padding:.35rem .7rem;border-radius:4px;pointer-events:none;z-index:10;';
+document.body.appendChild(legend);
+
 window.addEventListener('resize', () => {
   scenes.resize(window.innerWidth, window.innerHeight);
   // Re-read the pixel ratio too: it changes when the window moves to a
